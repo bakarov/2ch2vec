@@ -1,2 +1,4 @@
-# vector-model
-playground for word2vec and other stuff
+### yo fam serious shit here
+
+download the model:
+https://github.com/mmihaltz/word2vec-GoogleNews-vectors
