@@ -90,3 +90,5 @@ ENV/
 
 # Other
 .txt
+.json
+.bin
