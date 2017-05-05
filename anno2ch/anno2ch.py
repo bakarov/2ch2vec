@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from re import compile
 from requests import get
 from json import JSONDecodeError
@@ -26,8 +28,8 @@ def load_page(board='b'):
     try:
         dvach_page = get(DVACH + board + '/catalog.json').json()
         threads = [i['num'] for i in dvach_page['threads']]
-    except JSONDecodeError:
-        print('No board with such name.')
+    except:
+        print('Такой доски нет. Попробуй ввести две буквы: vg')
         return None
     return threads
 
@@ -52,9 +54,9 @@ def get_annotate_data(board, thread):
 def start_annotating(reference, comments):
     labels = []
     for i in comments:
-        print('REFERENCE:')
+        print('ОП-пост:')
         print(reference)
-        print('MESSAGE:')
+        print('Сообщение:')
         print(i)
         while (True):
             label = input()
@@ -63,13 +65,13 @@ def start_annotating(reference, comments):
             try:
                 label = int(label)
             except ValueError:
-                print('1 or 0')
+                print('Введи 1 если сообщения относятся к одной теме, и 0 иначе. quit для выхода (данные сохранятся)')
                 continue
             if label == 1 or label == 0:
                 label = int(label)
                 break
             else:
-                print('1 or 0')
+                print('Введи 1 если сообщения относятся к одной теме, и 0 иначе. quit для выхода (данные сохранятся)')
         labels.append(int(label))
         #clear_output()
     return labels
@@ -91,30 +93,41 @@ def make_df(reference, comments, labels):
 
 
 if __name__ == "__main__":
-    print('Enter board name')
+    print('Привет! Спасибо за интерес к исследованию по разметке Двача. Чтобы начать, введи имя любой доступной борды без слэша, к примеру, набери: vg')
     while (True):
         board = input()
         threads = load_page(board)
         if threads:
             break
-    print('Loading data from /' + board)
+    print('Отлично. Загружаем данные с ' + board + ', подожди минутку.')
     while (True):
-        show_thread_names(get_thread_names(threads, board))
-        print('Enter thread id')
+        try:
+            show_thread_names(get_thread_names(threads, board))
+        except:
+            continue
+        print('Перед тобой список доступных тредов. Введи номер (id) треда из списка, к примеру, 1. Набери quit для прекращения работы.')
         while (True):
             id = input()
             if id == 'quit':
-                exit('Thank for annotating')
+                print('Спасибо за работу!')
+                amount = 0
+                try:
+                    amount = len(DataFrame.from_csv('annotated.csv'))
+                except FileNotFoundError:
+                    pass
+                print('На текущий момент размечено ', amount, ' пар сообщений. Отлично!')
+                exit()
             try:
                 id = int(id)
             except ValueError:
-                print('Print number!')
+                print('Введи число, а не букву.')
                 continue
             if id >= 15:
-                print('No such thread in list')
+                print('Такого числа нет в списке.')
             else:
                 break
+        print('Введи 1 если сообщения относятся к одной теме, и 0 иначе. quit для выхода (данные сохранятся)')
         reference, comments = get_annotate_data(board, threads[id])
         labels = start_annotating(reference, comments)
         make_df(reference, comments[:len(labels)], labels)
-        print('Done, loading thread list from /' + board)
+        print('Отлично, работа с этим тредом закончена. Данные сохранены. Снова загружаем список тредов доски ' + board)
