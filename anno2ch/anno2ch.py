@@ -35,7 +35,7 @@ def load_page(board='b'):
 
 
 def get_thread_names(threads, board):
-    return [get(DVACH + board + '/res/' + thread + '.json', timeout=5).json()['threads'][0]['posts'][0]['subject'] for
+    return [get(DVACH + board + '/res/' + thread + '.json', timeout=10).json()['threads'][0]['posts'][0]['subject'] for
             thread in threads[:15]]
 
 
@@ -85,11 +85,11 @@ def make_df(reference, comments, labels):
     df.index.names = ['comment_id']
     try:
         file_path = 'annotated.csv'
-        old_df = DataFrame.from_csv(file_path)
+        old_df = DataFrame.from_csv(file_path, encoding = 'cp1251')
         df = concat((df, old_df)).drop_duplicates(subset='comment')
     except FileNotFoundError:
         pass
-    df.to_csv('annotated.csv')
+    df.to_csv('annotated.csv', encoding = 'cp1251')
 
 
 if __name__ == "__main__":
@@ -112,7 +112,7 @@ if __name__ == "__main__":
                 print('Спасибо за работу!')
                 amount = 0
                 try:
-                    amount = len(DataFrame.from_csv('annotated.csv'))
+                    amount = len(DataFrame.from_csv('annotated.csv', encoding = 'cp1251'))
                 except FileNotFoundError:
                     pass
                 print('На текущий момент размечено ', amount, ' пар сообщений. Отлично!')
