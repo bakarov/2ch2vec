@@ -9,9 +9,19 @@ from sys import exit
 DVACH = 'https://2ch.hk/'
 
 
-def cut(data):
-    r = compile(r'<.*?>|>>\d*|\(OP\)|&#(\d*);|&quot;|&gt;|(http|https):.*')
-    return r.sub('', punctuate_word(punctuate_sent((data))))
+def remove_html(text):
+    html = compile(r'<.*?>')
+    return html.sub('', text)
+
+
+def cut(text):
+    r = compile(r'\(OP\)|&#(\d*);|&quot;|&gt;|&#47;|(http|https):.*')
+    return r.sub('', make_alpha(remove_html(punctuate_sent(punctuate_word(text))))).lower().strip()
+
+
+def make_alpha(text):
+    alpha = compile('[^a-zа-яA-ZА-Я,\.\?! ]')
+    return alpha.sub('', text)
 
 
 def punctuate_sent(data):
@@ -35,19 +45,19 @@ def load_page(board='b'):
 
 
 def get_thread_names(threads, board):
-    return [get(DVACH + board + '/res/' + thread + '.json', timeout=10).json()['threads'][0]['posts'][0]['subject'] for
+    return [get(DVACH + board + '/res/' + thread + '.json', timeout=100).json()['threads'][0]['posts'][0]['subject'] for
             thread in threads[:15]]
 
 
 def show_thread_names(threads_names, start=0):
     for index, name in enumerate(threads_names[:15]):
-        print(index, ' ', name)
+        print(index, ' ', cut(name))
 
 
 def get_annotate_data(board, thread):
-    th = get(DVACH + board + '/res/' + thread + '.json', timeout=5).json()
-    reference = cut(th['threads'][0]['posts'][0]['comment'])[:100]
-    comments = [cut(i['comment']).strip() for i in th['threads'][0]['posts'][1:] if len(i['comment']) < 100]
+    th = get(DVACH + board + '/res/' + thread + '.json', timeout=100).json()
+    reference = cut(th['threads'][0]['posts'][0]['comment'])[:100].lower()
+    comments = [cut(i['comment']) for i in th['threads'][0]['posts'][1:] if cut(i['comment']) and len(i['comment']) < 100]
     return reference, comments
 
 
@@ -73,7 +83,6 @@ def start_annotating(reference, comments):
             else:
                 print('Введи 1 если сообщения относятся к одной теме, и 0 иначе. quit для выхода (данные сохранятся)')
         labels.append(int(label))
-        #clear_output()
     return labels
 
 
@@ -93,7 +102,7 @@ def make_df(reference, comments, labels):
 
 
 if __name__ == "__main__":
-    print('Привет! Спасибо за интерес к исследованию по разметке Двача. Чтобы начать, введи имя любой доступной борды без слэша, к примеру, набери: vg')
+    print('Привет! Спасибо за интерес к исследованию по разметке Двача. Чтобы начать, введи имя любой доступной борды без слэша, к примеру, набери: b')
     while (True):
         board = input()
         threads = load_page(board)
@@ -131,3 +140,4 @@ if __name__ == "__main__":
         labels = start_annotating(reference, comments)
         make_df(reference, comments[:len(labels)], labels)
         print('Отлично, работа с этим тредом закончена. Данные сохранены. Снова загружаем список тредов доски ' + board)
+        threads = load_page(board)
