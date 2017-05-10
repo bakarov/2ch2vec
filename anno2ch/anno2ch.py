@@ -36,7 +36,7 @@ def punctuate_word(data):
 
 def load_page(board='b'):
     try:
-        dvach_page = get(DVACH + board + '/catalog.json').json()
+        dvach_page = get(DVACH + board + '/catalog.json',  timeout=10).json()
         threads = [i['num'] for i in dvach_page['threads']]
     except:
         print('Такой доски нет. Попробуй ввести две буквы: vg')
@@ -45,7 +45,7 @@ def load_page(board='b'):
 
 
 def get_thread_names(threads, board):
-    return [get(DVACH + board + '/res/' + thread + '.json', timeout=100).json()['threads'][0]['posts'][0]['subject'] for
+    return [get(DVACH + board + '/res/' + thread + '.json', timeout=10).json()['threads'][0]['posts'][0]['subject'] for
             thread in threads[:15]]
 
 
@@ -55,9 +55,9 @@ def show_thread_names(threads_names, start=0):
 
 
 def get_annotate_data(board, thread):
-    th = get(DVACH + board + '/res/' + thread + '.json', timeout=100).json()
+    th = get(DVACH + board + '/res/' + thread + '.json', timeout=10).json()
     reference = cut(th['threads'][0]['posts'][0]['comment'])[:100].lower()
-    comments = [cut(i['comment']) for i in th['threads'][0]['posts'][1:] if cut(i['comment']) and len(i['comment']) < 100]
+    comments = [cut(i['comment'])[:100] for i in th['threads'][0]['posts'][1:] if cut(i['comment'])[:100]]
     return reference, comments
 
 
@@ -95,7 +95,7 @@ def make_df(reference, comments, labels):
     try:
         file_path = 'annotated.csv'
         old_df = DataFrame.from_csv(file_path, encoding = 'cp1251')
-        df = concat((df, old_df)).drop_duplicates(subset='comment')
+        df = concat((df, old_df)).drop_duplicates(subset='comment').reset_index(drop=True)
     except FileNotFoundError:
         pass
     df.to_csv('annotated.csv', encoding = 'cp1251')
@@ -110,10 +110,7 @@ if __name__ == "__main__":
             break
     print('Отлично. Загружаем данные с ' + board + ', подожди минутку.')
     while (True):
-        try:
-            show_thread_names(get_thread_names(threads, board))
-        except:
-            continue
+        show_thread_names(get_thread_names(threads, board))
         print('Перед тобой список доступных тредов. Введи номер (id) треда из списка, к примеру, 1. Набери quit для прекращения работы.')
         while (True):
             id = input()
@@ -138,6 +135,7 @@ if __name__ == "__main__":
         print('Введи 1 если сообщения относятся к одной теме, и 0 иначе. quit для выхода (данные сохранятся)')
         reference, comments = get_annotate_data(board, threads[id])
         labels = start_annotating(reference, comments)
+        print('Отлично, работа с этим тредом закончена. Размечено ' + str(len(labels)) + ' сообщений')
         make_df(reference, comments[:len(labels)], labels)
-        print('Отлично, работа с этим тредом закончена. Данные сохранены. Снова загружаем список тредов доски ' + board)
+        print('Данные сохранены. Теперь немного подожди, снова загружаем список тредов доски ' + board)
         threads = load_page(board)

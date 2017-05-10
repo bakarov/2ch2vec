@@ -1,9 +1,25 @@
 from re import sub, compile
+from os import path
+from pymorphy2 import MorphAnalyzer
+from nltk.tokenize import word_tokenize
+
+morph = MorphAnalyzer()
+
+
+with open(path.join('corpus', 'stopwords.txt')) as f:
+    stopwords = set(f.read().splitlines())
 
 
 def remove_html(text):
     html = compile(r'<.*?>')
     return html.sub('', text)
+
+def make_tokens(text, vocab):
+    return [token for token in word_tokenize(text) if token in vocab]
+
+
+def morph_parse(text):
+    return ' '.join([morph.parse(word)[0].normal_form for word in word_tokenize(text) if morph.parse(word)[0].normal_form not in stopwords])
 
 
 def cut(text):

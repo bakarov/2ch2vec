@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from os import path, makedirs
 from re import compile
 from requests import get
