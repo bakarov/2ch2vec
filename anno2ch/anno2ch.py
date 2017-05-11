@@ -13,10 +13,16 @@ def remove_html(text):
     html = compile(r'<.*?>')
     return html.sub('', text)
 
+def remove_leading(data):
+    r = compile(r'^(op|gt)')
+    return r.sub(r'', data)
+
 
 def cut(text):
-    r = compile(r'\(OP\)|&#(\d*);|&quot;|&gt;|&#47;|(http|https):.*')
-    return r.sub('', make_alpha(remove_html(punctuate_sent(punctuate_word(text))))).lower().strip()
+    r = compile(r'\(OP\)|gt|quot|&#(\d*);|&quot;|&gt;|&#47;|(http|https):.*')
+    return remove_leading(' '.join(r.sub('',
+    make_alpha(remove_html(punctuate_sent(punctuate_word(text))))).
+                                   lower().strip().split()))
 
 
 def make_alpha(text):
@@ -56,8 +62,8 @@ def show_thread_names(threads_names, start=0):
 
 def get_annotate_data(board, thread):
     th = get(DVACH + board + '/res/' + thread + '.json', timeout=10).json()
-    reference = cut(th['threads'][0]['posts'][0]['comment'])[:100].lower()
-    comments = [cut(i['comment'])[:100] for i in th['threads'][0]['posts'][1:] if cut(i['comment'])[:100]]
+    reference = cut(th['threads'][0]['posts'][0]['comment'])[:200].lower()
+    comments = [cut(i['comment'])[:200] for i in th['threads'][0]['posts'][1:] if len(cut(i['comment'])[:200]) > 30]
     return reference, comments
 
 
