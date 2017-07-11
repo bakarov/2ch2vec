@@ -4,12 +4,8 @@ from pickle import dump, load
 from os import path, makedirs
 from gensim.corpora import Dictionary
 
-CORPUS_FILE = 'all_lem.txt'
+CORPUS_FILE = '2ch_corpus.txt'
 OUTPUT_FILE = 'all_lem'
-
-WINDOW = 10
-DIMENSIONALITY = 100
-
 
 def load_data():
     with open(path.join('corpus', CORPUS_FILE)) as f:

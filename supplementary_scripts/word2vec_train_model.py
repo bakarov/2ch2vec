@@ -2,10 +2,10 @@ from gensim.models import Word2Vec
 from os import path, makedirs
 from pickle import load
 
-CORPUS_FILE = 'all_lem_tokenized.pickle'
+CORPUS_FILE = '2ch_corpus_tokenized.pickle'
 OUTPUT_FILE = 'all_lem_100'
 
-WINDOW = 10
+WINDOW = 7
 DIMENSIONALITY = 100
 
 

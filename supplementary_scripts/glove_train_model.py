@@ -2,10 +2,10 @@ from glove import Corpus, Glove
 from os import path, makedirs
 from pickle import dump, load
 
-CORPUS_FILE = 'all_lem_tokenized.pickle'
+CORPUS_FILE = '2ch_corpus_tokenized.pickle'
 OUTPUT_FILE = 'all_lem_100'
 
-WINDOW = 10
+WINDOW = 7
 DIMENSIONALITY = 100
 
 
@@ -17,8 +17,8 @@ def load_data():
 def train_model(model_data):
     corpus = Corpus()
     corpus.fit(model_data, window=WINDOW)
-    glove = Glove(no_components=DIMENSIONALITY, learning_rate=0.05)
-    glove.fit(corpus.matrix, epochs=2, no_threads=4, verbose=True)
+    glove = Glove(no_components=DIMENSIONALITY, alpha=0.75, max_count=100, learning_rate=0.05)
+    glove.fit(corpus.matrix, epochs=30, no_threads=4, verbose=True)
     glove.add_dictionary(corpus.dictionary)
     g_vocab = glove.dictionary
     return glove

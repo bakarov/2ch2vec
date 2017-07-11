@@ -5,8 +5,8 @@ from numpy import savetxt
 from pickle import dump
 from nltk import word_tokenize
 
-BOARD_LIST = ['pr', 'vg', 'b', 'me', 'po', 'diy', 'a', 'rf']
-FILENAME = 'all_lem'
+BOARD_LIST = ['pr', 'vg', 'b', 'po', 'diy', 'a', 'me', 'news', 'fag', 'hw', 's', 'v']
+FILENAME = '2ch_corpus_unlem'
 
 
 def merge_corpora(board_list, filename, lemmatize=False):
@@ -18,7 +18,7 @@ def merge_corpora(board_list, filename, lemmatize=False):
         df.comment = df.comment.apply(morph_parse)
     print('Corpus size = {}'.format(len(df)))
     save_corpus_to_text(df, filename)
-    picklize_corpus(df, filename)
+    #picklize_corpus(df, filename)
 
 
 def save_corpus_to_text(df, filename):
@@ -32,4 +32,4 @@ def picklize_corpus(df, filename):
 
 
 if __name__ == "__main__":
-    merge_corpora(BOARD_LIST, FILENAME, True)
+    merge_corpora(BOARD_LIST, FILENAME, False)
