@@ -1,7 +1,10 @@
-### Topic Modelling for short noisy documents
+### Automated Detection of Non-Relevant Posts on the Russian Imageboard 2ch: Importance of the Choice of Word Representations
 
-I'm use a problem of message relevance identification on 2ch as a case of this study. However, there are much more applied cases such as terrorism identification, medical documents clusterization, marketing analysis and so on.
+Repostiry with code, dataset and and links to the models proposed in the paper.
 
-Basically, I'm using two approaches: unsupervised ML (clusterization) and supervised ML (binary classfication).
+Results of the comparison of the word embedding models are in the Jupyter notebooks at directiry `paper`:
 
-Stay tuned, this repo updates every day. 
+* `semantic_relatedness.ipynb` for the semantic relatedness task
+* `word_similarity.ipynb` for the word similarity task
+
+Directory `data_miner` and `anno2ch` contain supplementary scripts for obtaining the corpus.
