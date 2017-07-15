@@ -7,7 +7,7 @@ Results of the comparison of the word embedding models are in the Jupyter notebo
 * `semantic_relatedness.ipynb` for the semantic relatedness task
 * `word_similarity.ipynb` for the word similarity task
 
-To reproduce the results of the experiments, download folders [`models`](https://yadi.sk/d/tFHYZcCQ3KxEac) and [`datasets`](https://yadi.sk/d/c_pg4k6b3KxEkr) and place them into `paper` folder. Then the following Python 3.X packages should be installed:
+To reproduce the results of the experiments, download folders [`models`](https://yadi.sk/d/weHZ_MtQ3L5XBA) and [`datasets`](https://yadi.sk/d/c_pg4k6b3KxEkr) and place them into `paper` folder. Then the following Python 3.X packages should be installed:
 
 * gensim
 * pandas
@@ -17,7 +17,6 @@ To reproduce the results of the experiments, download folders [`models`](https:/
 * pymorphy2
 * matplotlib
 * seaborn
-* [glove-python](https://github.com/maciejkula/glove-python)
 * [python-adagram](https://github.com/lopuhin/python-adagram)
 
 After that, one can try to execute code in the notebooks.
